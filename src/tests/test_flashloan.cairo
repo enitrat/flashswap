@@ -17,15 +17,10 @@ use ekubo::types::{i129::i129, delta::Delta};
 use flashswap::mocks::mock_ekubo;
 use ekubo::interfaces::core::{PoolKey, SwapParameters};
 use integer::BoundedInt;
-use flashswap::model::{FlashSwapParams, Route, RouteParameters};
+use flashswap::model::{FlashSwapParams, Route};
 use snforge_std::start_prank;
 
 
-impl RouteParametersDefault of Default<RouteParameters> {
-    fn default() -> RouteParameters {
-        RouteParameters { is_token1: false, sqrt_ratio_limit: 0, skip_ahead: 0, }
-    }
-}
 use debug::PrintTrait;
 
 
@@ -53,14 +48,23 @@ fn test_flashloan_contract() {
         tick_spacing: 100,
         extension: 0.try_into().unwrap()
     };
-    let initial_swap_param = SwapParameters {
-        amount: i129 { mag: 1000, sign: true },
-        is_token1: false,
-        sqrt_ratio_limit: BoundedInt::<u256>::max(),
-        skip_ahead: 0,
-    };
+    let amount_from = 1000;
 
     let mut routes: Array<Route> = Default::default();
+    routes
+        .append(
+            Route {
+                pool_key: PoolKey {
+                    token0: testnet::USDC(),
+                    token1: testnet::ETH(),
+                    fee: 3000,
+                    tick_spacing: 100,
+                    extension: 0.try_into().unwrap()
+                },
+                token_from: testnet::ETH(),
+                token_to: testnet::USDT(),
+            }
+        );
     routes
         .append(
             Route {
@@ -71,7 +75,6 @@ fn test_flashloan_contract() {
                     tick_spacing: 100,
                     extension: 0.try_into().unwrap()
                 },
-                route_parameters: RouteParametersDefault::default(),
                 token_from: testnet::ETH(),
                 token_to: testnet::USDT(),
             }
@@ -86,19 +89,13 @@ fn test_flashloan_contract() {
                     tick_spacing: 100,
                     extension: 0.try_into().unwrap()
                 },
-                route_parameters: RouteParametersDefault::default(),
                 token_from: testnet::USDT(),
                 token_to: testnet::USDC(),
             }
         );
 
-    let mut params = FlashSwapParams {
-        token_from: testnet::USDC(),
-        initial_pool_key: initial_pool_key,
-        initial_params: initial_swap_param,
-        routes: routes,
-    };
+    let mut params = FlashSwapParams { amount_from, routes: routes, };
 
-    start_prank(dispatcher.contract_address, addr);
+    start_prank(dispatcher.contract_address, mock_ekubo_address);
     dispatcher.flashloan_swap(params);
 }
