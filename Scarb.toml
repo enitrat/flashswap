@@ -1,0 +1,21 @@
+[package]
+name = "flashswap"
+version = "0.1.0"
+
+# See more keys and their definitions at https://docs.swmansion.com/scarb/docs/reference/manifest.html
+
+[dependencies]
+starknet = ">=2.2.0"
+openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", tag = "v0.7.0" }
+ekubo = { git = "https://github.com/enitrat/ekubo_abis" }
+snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry.git", tag = "v0.7.1" }
+
+
+[[target.starknet-contract]]
+sierra = true
+casm = true
+
+[[tool.snforge.fork]]
+name = "GOERLI_LATEST"
+url = "https://starknet-goerli.g.alchemy.com/v2/qKIz8HNu4M7RlOQNjdSQHuA6F57Ag88h"
+block_id.tag = "Latest"
