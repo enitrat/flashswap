@@ -20,6 +20,8 @@ fn compute_gains(
     gains
 }
 
+const MAX_SQRT_RATIO_LIMIT:u256 = 6277100250585753475930931601400621808602321654880405518632;
+
 fn is_token_1(token_from: ContractAddress, token_to: ContractAddress) -> bool {
     let token_from:felt252 = token_from.into();
     let token_from:u256 = token_from.into();

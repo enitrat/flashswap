@@ -23,8 +23,7 @@ mod FlashLoanerTest {
     use ekubo::types::{delta::Delta, i129::i129};
     use starknet::get_contract_address;
     use flashswap::model::{FlashSwapParams, Route, FlashSwapResult};
-    use flashswap::utils::compute_gains;
-    use integer::BoundedInt;
+    use flashswap::{utils, utils::compute_gains};
 
     const RECEIVER: felt252 = 0x0079D9CB40139969C1af50CfeBc7a246761c423dfa4e045af2777Ef571f292Bf;
 
@@ -162,7 +161,7 @@ mod FlashLoanerTest {
                     SwapParameters {
                         amount: swap_amt,
                         is_token1: is_from_token1,
-                        sqrt_ratio_limit: BoundedInt::<u256>::max(),
+                        sqrt_ratio_limit: utils::MAX_SQRT_RATIO_LIMIT,
                         skip_ahead: 0
                     }
                 );
